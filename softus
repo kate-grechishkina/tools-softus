@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Use this little script to check if the specific software is present or not in clients accounts. 
+# It prooves itself more useful if run in a loop to check more than one server.
+# It will NOT work if you DON'T use default_softaculous plan for all users on the server.
+
+# Usage:
+#      softcaculos [scriptname|option]
+# Version: 1.0
+# Autor: Kate G.
+
+case $1 in 
+            -h | --help )
+            echo -e "Usage:\nsoftcaculos [scriptname|option]\n"
+            echo -e "You can use the following arguments:\n"
+            echo -e "-l \t --list \t\t Lists all scripts provided by Softaculous"
+            echo -e "-h \t --help \t\t Shows this page\n"
+            ;;
+        -l | --list )
+            wget -qO- https://www.softaculous.com/scripts.php | grep -i "fullname" | awk '{$1=""; $2=""; print}' | sed 's/,//g' | sed "s/'//g" | sort
+            ;;
+        *) 
+            SID=$(wget -qO- https://www.softaculous.com/scripts.php | grep -i "fullname' => '${1}" -b4 | grep "sid" | awk '{ print $4 }' | sed "s/,//g" | sed "s/'//g" 2> /dev/null)
+            if [ ! -z "$SID" ] ; then
+            #    # good
+                echo -e "${YELLOW}Script name is correct, checking.${NOCOLOR}"
+            else
+               # bad
+                echo -e "\e[91mNo such script is provided by Softaculous. To check the full list use -l.${NOCOLOR}"
+                exit 1
+            fi
+            for i in $(echo $SID)
+            do
+                INFO=$(wget -qO- https://www.softaculous.com/scripts.php | grep "'sid' => '$i'" -a15)
+                SOFTNAME=$(echo $INFO | grep -o "softname.*" |awk '{print $3}' | sed "s/,//g" | sed "s/'//g")
+                VERSION=$(echo $INFO | grep -o "version.*" |awk '{print $3}' | sed "s/,//g" | sed "s/'//g")
+                plan=$(grep -o i\:${i}\; /usr/local/cpanel/whostmgr/docroot/cgi/softaculous/conf/softaculous_default.plan | sort | uniq)
+                installed=$(ls /var/softaculous/$SOFTNAME 2> /dev/null)
+                if [ ! -z "$installed" ] ; then
+                    # good
+                    if [ ! -z "$plan"  ]; then
+                        echo -e "\e[92m$1 (version: $VERSION) is present on $(hostname) for users in Softaculous.  ${NOCOLOR}"
+                    else
+                        echo -e "\e[91mNo $1 (version: $VERSION) script on $(hostname) in users accounts.${NOCOLOR}"
+                    fi
+                else
+                        echo -e "\e[91mNo $1 (version: $VERSION) script on $(hostname) in users accounts.${NOCOLOR}"
+                fi
+            done
+            ;;
+    esac
