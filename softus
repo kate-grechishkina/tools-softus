@@ -5,13 +5,13 @@
 # It will NOT work if you DON'T use default_softaculous plan for all users on the server.
 
 # Usage:
-#      softcaculos [scriptname|option]
+#      softus [scriptname|option]
 # Version: 1.0
 # Autor: Kate G.
 
 case $1 in 
             -h | --help )
-            echo -e "Usage:\nsoftcaculos [scriptname|option]\n"
+            echo -e "Usage:\nsoftus [scriptname|option]\n"
             echo -e "You can use the following arguments:\n"
             echo -e "-l \t --list \t\t Lists all scripts provided by Softaculous"
             echo -e "-h \t --help \t\t Shows this page\n"
