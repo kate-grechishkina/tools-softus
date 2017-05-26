@@ -9,6 +9,8 @@
 # Version: 1.0
 # Autor: Kate G.
 
+NOCOLOR="\e[0m"
+
 args=$# 
 if [[ "$args" -eq "0" ]]; then 
         echo -e "\e[91mYou should specify a scriptname! See softus -h \e[0m"
