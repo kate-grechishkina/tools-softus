@@ -31,7 +31,7 @@ case $1 in
             SID=$(wget -qO- https://www.softaculous.com/scripts.php | grep -i "fullname' => '${1}" -b4 | grep "sid" | awk '{ print $4 }' | sed "s/,//g" | sed "s/'//g" 2> /dev/null)
             if [ ! -z "$SID" ] ; then
             #    # good
-                echo -e "${YELLOW}Script name is correct, checking.${NOCOLOR}"
+                echo -e "\e[93mScript name is correct, checking.${NOCOLOR}"
             else
                # bad
                 echo -e "\e[91mNo such script is provided by Softaculous. To check the full list use -l.${NOCOLOR}"
